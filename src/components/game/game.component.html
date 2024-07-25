@@ -1,0 +1,13 @@
+<div class="containe shd-game-container">
+    <div class="row shd-canvas">
+        <div class="col-12 d-flex justify-content-center align-items-center">
+            <canvas #gameCanvas (click)="handleCanvasClick($event);"></canvas>
+        </div>
+    </div>
+    <div class="row shd-controls pt-5">
+        <div class="col-12 d-flex justify-content-center">
+                <button (click)="toggleRunning()" class="shd-btn-primary me-3" >{{ running ? 'Pause' : 'Start' }}</button>
+                <button (click)="resetGrid()" class="shd-btn-outline">Reset</button>
+        </div>
+    </div>
+</div>
