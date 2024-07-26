@@ -25,6 +25,7 @@ export class GameComponent implements AfterViewInit {
   private isBrowser: boolean;
   public population: number;
   public generation: number;
+  private populationDied: boolean;
 
   constructor(@Inject(PLATFORM_ID) private platformId: Object) {
     this.isBrowser = isPlatformBrowser(platformId);
@@ -33,6 +34,7 @@ export class GameComponent implements AfterViewInit {
     this.grid = [];
     this.population = 0
     this.generation = 0
+    this.populationDied = false;
   }
 
   ngAfterViewInit() {
@@ -53,6 +55,11 @@ export class GameComponent implements AfterViewInit {
 
   private runGame() {
     if (!this.running || !this.isBrowser) return;
+    if (this.population == 0) {
+      this.running = false;
+      this.populationDied = true;
+      return;
+    }
 
     if (this.shouldShrinkCells()) {
       this.shrinkCellsAndRecenter();
@@ -125,6 +132,8 @@ export class GameComponent implements AfterViewInit {
 
   handleCanvasClick(event: MouseEvent) {
     if (!this.isBrowser) return;
+    if (this.populationDied) this.generation = 0
+
     const rect = this.canvas.nativeElement.getBoundingClientRect();
     const x = event.clientX - rect.left;
     const y = event.clientY - rect.top;
@@ -153,6 +162,8 @@ export class GameComponent implements AfterViewInit {
     this.drawGrid();
     this.resizeCanvas();
     this.running = false;
+    this.generation = 0
+    this.populationDied = false;
   }
 
 
