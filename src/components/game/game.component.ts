@@ -1,5 +1,5 @@
 import { isPlatformBrowser } from "@angular/common";
-import { Component, OnInit, AfterViewInit, ViewChild, ElementRef, Inject, PLATFORM_ID, HostListener } from "@angular/core";
+import { Component, OnInit, AfterViewInit, ViewChild, ElementRef, Inject, PLATFORM_ID, HostListener, NgZone } from "@angular/core";
 
 @Component({
   selector: 'app-game',
@@ -9,14 +9,15 @@ import { Component, OnInit, AfterViewInit, ViewChild, ElementRef, Inject, PLATFO
 export class GameComponent implements OnInit, AfterViewInit {
   @ViewChild('gameCanvas', { static: true }) canvas!: ElementRef<HTMLCanvasElement>;
   private ctx!: CanvasRenderingContext2D | null;
-  private cellSize = 20;
+  private cellSize = 25;
+  private minCellSize = 8;
   private rows: number;
   private cols: number;
   private grid: boolean[][];
   public running = false;
   private isBrowser: boolean;
 
-  constructor(@Inject(PLATFORM_ID) private platformId: Object) {
+  constructor(@Inject(PLATFORM_ID) private platformId: Object, private ngZone: NgZone) {
     this.isBrowser = isPlatformBrowser(platformId);
     this.rows = 0;
     this.cols = 0;
@@ -24,11 +25,7 @@ export class GameComponent implements OnInit, AfterViewInit {
   }
 
   ngOnInit() {
-    // Only run canvas-related code in the browser
-    if (this.isBrowser) {
-      this.resizeCanvas();
-      this.resetGrid();
-    }
+
   }
 
   ngAfterViewInit() {
@@ -48,6 +45,27 @@ export class GameComponent implements OnInit, AfterViewInit {
     }
   }
 
+  private runGame() {
+    if (!this.running || !this.isBrowser) return;
+
+    if (this.shouldShrinkCells()) {
+      this.shrinkCellsAndRecenter();
+    }
+
+    this.grid = this.getNextGeneration(this.grid);
+    this.drawGrid();
+    requestAnimationFrame(() => this.runGame());
+    this.timeOut(500)
+  }
+
+  private timeOut(time: number){
+    this.ngZone.run(() => {
+      setTimeout(() => {
+      }, time); 
+    });
+  }
+  
+
   private resizeCanvas() {
     if (!this.isBrowser) return;
     this.canvas.nativeElement.width = 0.9 * window.innerWidth;
@@ -56,9 +74,9 @@ export class GameComponent implements OnInit, AfterViewInit {
     this.cols = Math.floor(this.canvas.nativeElement.width / this.cellSize);
     if (this.grid) {
       const newGrid = this.createGrid();
-      for (let row = 0; row < this.rows; row++) {
-        for (let col = 0; col < this.cols; col++) {
-          if (this.grid[row] && this.grid[row][col] !== undefined) {
+      for (let row = 0; row < Math.min(this.grid.length, this.rows); row++) {
+        for (let col = 0; col < Math.min(this.grid[row].length, this.cols); col++) {
+          if (this.grid[row][col] !== undefined) {
             newGrid[row][col] = this.grid[row][col];
           }
         }
@@ -97,8 +115,10 @@ export class GameComponent implements OnInit, AfterViewInit {
     const col = Math.floor(x / this.cellSize);
     const row = Math.floor(y / this.cellSize);
 
-    this.grid[row][col] = !this.grid[row][col];
-    this.drawGrid();
+    if (this.isWithinBounds(col, row)) {
+      this.grid[row][col] = !this.grid[row][col];
+      this.drawGrid();
+    }
   }
 
   toggleRunning() {
@@ -111,17 +131,13 @@ export class GameComponent implements OnInit, AfterViewInit {
 
   resetGrid() {
     if (!this.isBrowser) return;
+    this.cellSize = 20;
     this.grid = this.createGrid();
     this.drawGrid();
+    this.resizeCanvas();
+    this.running = false;
   }
 
-  private runGame() {
-    if (!this.running || !this.isBrowser) return;
-
-    this.grid = this.getNextGeneration(this.grid);
-    this.drawGrid();
-    requestAnimationFrame(() => this.runGame());
-  }
 
   private getNextGeneration(grid: boolean[][]): boolean[][] {
     const newGrid = this.createGrid();
@@ -147,11 +163,64 @@ export class GameComponent implements OnInit, AfterViewInit {
         if (i === 0 && j === 0) continue;
         const x = col + j;
         const y = row + i;
-        if (x >= 0 && x < this.cols && y >= 0 && y < this.rows) {
+        if (this.isWithinBounds(x, y)) {
           count += grid[y][x] ? 1 : 0;
         }
       }
     }
     return count;
+  }
+
+  private isWithinBounds(x: number, y: number): boolean {
+    return x >= 0 && x < this.cols && y >= 0 && y < this.rows;
+  }
+
+  private shouldShrinkCells(): boolean {
+    if (this.cellSize <= this.minCellSize) return false;
+
+    for (let row = 0; row < this.rows; row++) {
+      if (this.grid[row][0] || this.grid[row][this.cols - 1]) {
+        return true;
+      }
+    }
+    for (let col = 0; col < this.cols; col++) {
+      if (this.grid[0][col] || this.grid[this.rows - 1][col]) {
+        return true;
+      }
+    }
+    return false;
+  }
+
+  private shrinkCellsAndRecenter() {
+    if (this.cellSize > this.minCellSize) {
+      this.cellSize--;
+      this.recenterGrid();
+      this.resizeCanvas();
+    }
+  }
+
+  private recenterGrid() {
+    const newRows = Math.floor(this.canvas.nativeElement.height / this.cellSize);
+    const newCols = Math.floor(this.canvas.nativeElement.width / this.cellSize);
+    const newGrid = Array.from({ length: newRows }, () => Array(newCols).fill(false));
+
+    const rowOffset = Math.floor((newRows - this.rows) / 2);
+    const colOffset = Math.floor((newCols - this.cols) / 2);
+
+    for (let row = 0; row < this.rows; row++) {
+      for (let col = 0; col < this.cols; col++) {
+        if (this.grid[row][col]) {
+          const newRow = row + rowOffset;
+          const newCol = col + colOffset;
+          if (newRow >= 0 && newRow < newRows && newCol >= 0 && newCol < newCols) {
+            newGrid[newRow][newCol] = this.grid[row][col];
+          }
+        }
+      }
+    }
+
+    this.rows = newRows;
+    this.cols = newCols;
+    this.grid = newGrid;
   }
 }
