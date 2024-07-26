@@ -1,10 +1,15 @@
 import { isPlatformBrowser } from "@angular/common";
-import { Component, AfterViewInit, ViewChild, ElementRef, Inject, PLATFORM_ID, HostListener, NgZone } from "@angular/core";
+import { Component, AfterViewInit, ViewChild, ElementRef, Inject, PLATFORM_ID, HostListener } from "@angular/core";
+import { CommonModule } from '@angular/common';
 
 @Component({
   selector: 'app-game',
   templateUrl: './game.component.html',
-  styleUrls: ['./game.component.scss']
+  styleUrls: ['./game.component.scss'],
+  standalone: true,
+  imports: [
+    CommonModule
+  ],
 })
 export class GameComponent implements AfterViewInit {
   @ViewChild('gameCanvas', { static: true }) canvas!: ElementRef<HTMLCanvasElement>;
@@ -18,12 +23,16 @@ export class GameComponent implements AfterViewInit {
   private grid: boolean[][];
   public running = false;
   private isBrowser: boolean;
+  public population: number;
+  public generation: number;
 
-  constructor(@Inject(PLATFORM_ID) private platformId: Object, private ngZone: NgZone) {
+  constructor(@Inject(PLATFORM_ID) private platformId: Object) {
     this.isBrowser = isPlatformBrowser(platformId);
     this.rows = 0;
     this.cols = 0;
     this.grid = [];
+    this.population = 0
+    this.generation = 0
   }
 
   ngAfterViewInit() {
@@ -51,6 +60,7 @@ export class GameComponent implements AfterViewInit {
 
     this.grid = this.getNextGeneration(this.grid);
     this.drawGrid();
+    this.generation ++;
 
     if (this.cellSize >= 20) setTimeout(() => this.runGame(), 90)
     else if (this.cellSize >= 15) setTimeout(() => this.runGame(), 80)
@@ -89,13 +99,19 @@ export class GameComponent implements AfterViewInit {
   private drawGrid() {
     if (!this.isBrowser) return;
     this.ctx?.clearRect(0, 0, this.canvas.nativeElement.width, this.canvas.nativeElement.height);
-    
+    this.population = 0;
     for (let row = 0; row < this.rows; row++) {
       for (let col = 0; col < this.cols; col++) {
         if(this.ctx){
           this.ctx.beginPath();
           this.ctx.rect(col * this.cellSize, row * this.cellSize, this.cellSize, this.cellSize);
-          this.ctx.fillStyle = this.grid[row][col] ? 'black' : 'white';
+          if (this.grid[row][col]){
+            this.ctx.fillStyle =  'black' 
+            this.population ++;
+          }
+          else{
+            this.ctx.fillStyle =  'white' 
+          }
           this.ctx.fill();
 
           if (this.cellSize >= 20) this.ctx.strokeStyle = '#D6D5D5'

@@ -12,13 +12,14 @@
     <div class="row align-items-center shd-controls-row ">
         <div class="col-4 d-flex flex-column ps-5">
             <div>
-                generation: <span class="ms-4">2738289</span> 
+                generation: <span class="ms-4">{{generation}}</span> 
             </div>
             <div>
-                current_population: <span class="ms-4">2738289</span> 
+                current_population: <span class="ms-4">{{population}}</span> 
             </div>
             <div>
-                status: <span class="ms-4 shd-color-accent">on_going</span>
+                status: <span *ngIf="running" class="ms-4 shd-color-success">on_going</span> 
+                <span *ngIf="!running" class="ms-4 shd-color-error">stopped</span>
             </div>
         </div>
 
