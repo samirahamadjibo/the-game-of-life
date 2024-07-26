@@ -1,16 +1,18 @@
 import { isPlatformBrowser } from "@angular/common";
-import { Component, OnInit, AfterViewInit, ViewChild, ElementRef, Inject, PLATFORM_ID, HostListener, NgZone } from "@angular/core";
+import { Component, AfterViewInit, ViewChild, ElementRef, Inject, PLATFORM_ID, HostListener, NgZone } from "@angular/core";
 
 @Component({
   selector: 'app-game',
   templateUrl: './game.component.html',
   styleUrls: ['./game.component.scss']
 })
-export class GameComponent implements OnInit, AfterViewInit {
+export class GameComponent implements AfterViewInit {
   @ViewChild('gameCanvas', { static: true }) canvas!: ElementRef<HTMLCanvasElement>;
+  @ViewChild('canvasContainer', { static: true }) container!: ElementRef<HTMLDivElement>;
+
   private ctx!: CanvasRenderingContext2D | null;
   private cellSize = 25;
-  private minCellSize = 8;
+  private minCellSize = 10;
   private rows: number;
   private cols: number;
   private grid: boolean[][];
@@ -24,16 +26,11 @@ export class GameComponent implements OnInit, AfterViewInit {
     this.grid = [];
   }
 
-  ngOnInit() {
-
-  }
-
   ngAfterViewInit() {
     // Only run canvas-related code in the browser
     if (this.isBrowser) {
       this.ctx = this.canvas.nativeElement.getContext('2d');
       this.resizeCanvas();
-      this.resetGrid();
     }
   }
 
@@ -54,22 +51,21 @@ export class GameComponent implements OnInit, AfterViewInit {
 
     this.grid = this.getNextGeneration(this.grid);
     this.drawGrid();
-    requestAnimationFrame(() => this.runGame());
-    this.timeOut(500)
+
+    if (this.cellSize >= 20) setTimeout(() => this.runGame(), 90)
+    else if (this.cellSize >= 15) setTimeout(() => this.runGame(), 80)
+    else if (this.cellSize >= 10) setTimeout(() => this.runGame(), 0)
   }
 
-  private timeOut(time: number){
-    this.ngZone.run(() => {
-      setTimeout(() => {
-      }, time); 
-    });
-  }
-  
 
   private resizeCanvas() {
     if (!this.isBrowser) return;
-    this.canvas.nativeElement.width = 0.9 * window.innerWidth;
-    this.canvas.nativeElement.height = 0.8 * window.innerHeight;
+    const containerWidth = this.container.nativeElement.clientWidth;
+    const containerHeight = this.container.nativeElement.clientHeight;
+
+    this.canvas.nativeElement.width = containerWidth;
+    this.canvas.nativeElement.height = containerHeight;
+
     this.rows = Math.floor(this.canvas.nativeElement.height / this.cellSize);
     this.cols = Math.floor(this.canvas.nativeElement.width / this.cellSize);
     if (this.grid) {
@@ -93,6 +89,7 @@ export class GameComponent implements OnInit, AfterViewInit {
   private drawGrid() {
     if (!this.isBrowser) return;
     this.ctx?.clearRect(0, 0, this.canvas.nativeElement.width, this.canvas.nativeElement.height);
+    
     for (let row = 0; row < this.rows; row++) {
       for (let col = 0; col < this.cols; col++) {
         if(this.ctx){
@@ -100,6 +97,10 @@ export class GameComponent implements OnInit, AfterViewInit {
           this.ctx.rect(col * this.cellSize, row * this.cellSize, this.cellSize, this.cellSize);
           this.ctx.fillStyle = this.grid[row][col] ? 'black' : 'white';
           this.ctx.fill();
+
+          if (this.cellSize >= 20) this.ctx.strokeStyle = '#D6D5D5'
+          else if (this.cellSize >= 15) this.ctx.strokeStyle = '#DEDDDD'
+          else if (this.cellSize >= 10) this.ctx.strokeStyle = '#EFEFEF'
           this.ctx.stroke();
         }
       }
@@ -193,7 +194,7 @@ export class GameComponent implements OnInit, AfterViewInit {
 
   private shrinkCellsAndRecenter() {
     if (this.cellSize > this.minCellSize) {
-      this.cellSize--;
+      this.cellSize = this.cellSize - 5 < this.minCellSize ? this.cellSize : this.cellSize - 5;
       this.recenterGrid();
       this.resizeCanvas();
     }
