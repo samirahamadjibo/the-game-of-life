@@ -23,12 +23,15 @@
             </div>
         </div>
 
-        <div class="col-6 d-flex">
+        <div class="col-4 d-flex">
             <div>
                 <button (click)="toggleRunning()" class="shd-btn-primary me-3">{{ running ? 'Pause' : 'Start'
                     }}</button>
                 <button (click)="resetGrid()" class="shd-btn-outline-dark">Reset</button>
             </div>
+        </div>
+        <div class="col-4">
+            <button (click)="getRandomPattern()" class="shd-btn-icon-primary fs-xxl fw-bold"><i class="bi bi-shuffle"></i></button>
         </div>
     </div>
 </div>

@@ -17,7 +17,7 @@ export class GameComponent implements AfterViewInit {
 
   private ctx!: CanvasRenderingContext2D | null;
   private cellSize = 25;
-  private minCellSize = 10;
+  private minCellSize = 15;
   private rows: number;
   private cols: number;
   private grid: boolean[][];
@@ -27,14 +27,55 @@ export class GameComponent implements AfterViewInit {
   public generation: number;
   private populationDied: boolean;
 
+  private rPentomino: boolean[][];
+  private dieHard: boolean[][];
+  private acorn: boolean[][];
+
   constructor(@Inject(PLATFORM_ID) private platformId: Object) {
     this.isBrowser = isPlatformBrowser(platformId);
     this.rows = 0;
     this.cols = 0;
     this.grid = [];
+    this.rPentomino = [];
+    this.dieHard = [];
+    this.acorn = [];
     this.population = 0
     this.generation = 0
     this.populationDied = false;
+  }
+
+  setRandomPatterns(){
+    const offsetRow = Math.floor(this.rows/2);
+    const offsetCol = Math.floor(this.cols/2);
+
+    
+    this.rPentomino = this.createGrid()
+    this.dieHard = this.createGrid()
+
+    this.rPentomino[offsetRow][offsetCol+1] = true;
+    this.rPentomino[offsetRow][offsetCol+2] = true;
+    this.rPentomino[offsetRow+1][offsetCol] = true;
+    this.rPentomino[offsetRow+1][offsetCol+1] = true;
+    this.rPentomino[offsetRow+2][offsetCol+1] = true;
+
+    this.dieHard[offsetRow][offsetCol+6] = true;
+    this.dieHard[offsetRow+1][offsetCol] = true;
+    this.dieHard[offsetRow+1][offsetCol+1] = true;
+    this.dieHard[offsetRow+2][offsetCol+1] = true;
+    this.dieHard[offsetRow+2][offsetCol+5] = true;
+    this.dieHard[offsetRow+2][offsetCol+6] = true;
+    this.dieHard[offsetRow+2][offsetCol+7] = true;
+  }
+
+  getRandomPattern(){
+    if (!this.isBrowser) return;
+    this.running = false;
+    this.setRandomPatterns()
+
+    this.generation = 0
+    const rand = Math.floor(Math.random() * (3 - 1) + 1)
+    rand == 1 ? this.grid = this.rPentomino : this.grid = this.dieHard;
+    this.drawGrid();
   }
 
   ngAfterViewInit() {
@@ -42,6 +83,8 @@ export class GameComponent implements AfterViewInit {
     if (this.isBrowser) {
       this.ctx = this.canvas.nativeElement.getContext('2d');
       this.resizeCanvas();
+
+      this.setRandomPatterns()
     }
   }
 
