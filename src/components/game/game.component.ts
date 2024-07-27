@@ -1,6 +1,7 @@
 import { isPlatformBrowser } from "@angular/common";
 import { Component, AfterViewInit, ViewChild, ElementRef, Inject, PLATFORM_ID, HostListener } from "@angular/core";
 import { CommonModule } from '@angular/common';
+import { MAT_DIALOG_DATA, MatDialog, MatDialogModule, MatDialogRef } from '@angular/material/dialog';
 
 @Component({
   selector: 'app-game',
@@ -8,7 +9,8 @@ import { CommonModule } from '@angular/common';
   styleUrls: ['./game.component.scss'],
   standalone: true,
   imports: [
-    CommonModule
+    CommonModule,
+    MatDialogModule
   ],
 })
 export class GameComponent implements AfterViewInit {
@@ -31,7 +33,7 @@ export class GameComponent implements AfterViewInit {
   private dieHard: boolean[][];
   private acorn: boolean[][];
 
-  constructor(@Inject(PLATFORM_ID) private platformId: Object) {
+  constructor(@Inject(PLATFORM_ID) private platformId: Object, public dialog: MatDialog) {
     this.isBrowser = isPlatformBrowser(platformId);
     this.rows = 0;
     this.cols = 0;
@@ -294,4 +296,25 @@ export class GameComponent implements AfterViewInit {
     this.cols = newCols;
     this.grid = newGrid;
   }
+
+  showInfo(){
+    this.dialog.open(DialogComponent, {
+      width: '500px',
+    });
+  }
 }
+
+@Component({
+  selector: 'app-dialog',
+  templateUrl: './dialog.component.html',
+})
+export class DialogComponent{
+  constructor(
+    public dialogRef: MatDialogRef<DialogComponent>,
+    @Inject(MAT_DIALOG_DATA) public data: any) {}
+
+  onNoClick(): void {
+    this.dialogRef.close();
+  }
+}
+
