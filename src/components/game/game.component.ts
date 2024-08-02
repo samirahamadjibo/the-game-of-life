@@ -31,52 +31,82 @@ export class GameComponent implements AfterViewInit {
 
   private rPentomino: boolean[][];
   private dieHard: boolean[][];
-  private acorn: boolean[][];
+  private herschel: boolean[][];
 
   constructor(@Inject(PLATFORM_ID) private platformId: Object, public dialog: MatDialog) {
     this.isBrowser = isPlatformBrowser(platformId);
-    this.rows = 0;
-    this.cols = 0;
+    this.rows = 100;
+    this.cols = 100;
     this.grid = [];
     this.rPentomino = [];
     this.dieHard = [];
-    this.acorn = [];
+    this.herschel = [];
     this.population = 0
     this.generation = 0
     this.populationDied = false;
   }
 
   setRandomPatterns(){
-    const offsetRow = Math.floor(this.rows/2);
-    const offsetCol = Math.floor(this.cols/2);
+    const centerRowOffset = Math.floor(this.rows/3);
+    const centerColOffset = Math.floor(this.cols/3);
+    
+    const rowOffset = 10;
+    const colOffset = 10;
 
     
     this.rPentomino = this.createGrid()
+    this.herschel = this.createGrid()
     this.dieHard = this.createGrid()
 
-    this.rPentomino[offsetRow][offsetCol+1] = true;
-    this.rPentomino[offsetRow][offsetCol+2] = true;
-    this.rPentomino[offsetRow+1][offsetCol] = true;
-    this.rPentomino[offsetRow+1][offsetCol+1] = true;
-    this.rPentomino[offsetRow+2][offsetCol+1] = true;
+    this.rPentomino[centerRowOffset][centerColOffset+1] = true;
+    this.rPentomino[centerRowOffset][centerColOffset+2] = true;
+    this.rPentomino[centerRowOffset+1][centerColOffset] = true;
+    this.rPentomino[centerRowOffset+1][centerColOffset+1] = true;
+    this.rPentomino[centerRowOffset+2][centerColOffset+1] = true;
 
-    this.dieHard[offsetRow][offsetCol+6] = true;
-    this.dieHard[offsetRow+1][offsetCol] = true;
-    this.dieHard[offsetRow+1][offsetCol+1] = true;
-    this.dieHard[offsetRow+2][offsetCol+1] = true;
-    this.dieHard[offsetRow+2][offsetCol+5] = true;
-    this.dieHard[offsetRow+2][offsetCol+6] = true;
-    this.dieHard[offsetRow+2][offsetCol+7] = true;
+    this.dieHard[centerRowOffset][centerColOffset+6] = true;
+    this.dieHard[centerRowOffset+1][centerColOffset] = true;
+    this.dieHard[centerRowOffset+1][centerColOffset+1] = true;
+    this.dieHard[centerRowOffset+2][centerColOffset+1] = true;
+    this.dieHard[centerRowOffset+2][centerColOffset+5] = true;
+    this.dieHard[centerRowOffset+2][centerColOffset+6] = true;
+    this.dieHard[centerRowOffset+2][centerColOffset+7] = true;
+    
+    this.herschel[rowOffset+12][colOffset] = true;
+    this.herschel[rowOffset+13][colOffset] = true;
+    this.herschel[rowOffset+14][colOffset] = true;
+    this.herschel[rowOffset+14][colOffset+1] = true;
+    this.herschel[rowOffset+13][colOffset+2] = true;
+    this.herschel[rowOffset+14][colOffset+2] = true;
+    this.herschel[rowOffset+15][colOffset+2] = true;
+    
+    this.herschel[rowOffset][colOffset+15] = true;
+    this.herschel[rowOffset+1][colOffset+15] = true;
+    this.herschel[rowOffset+1][colOffset+16] = true;
+    this.herschel[rowOffset+2][colOffset+16] = true;
+    this.herschel[rowOffset][colOffset+17] = true;
+    
+    this.herschel[rowOffset+1][colOffset+32] = true;
+    this.herschel[rowOffset+2][colOffset+32] = true;
+    this.herschel[rowOffset][colOffset+33] = true;
+    this.herschel[rowOffset+3][colOffset+33] = true;
+    this.herschel[rowOffset+1][colOffset+34] = true;
+    this.herschel[rowOffset+3][colOffset+34] = true;
+    this.herschel[rowOffset+2][colOffset+35] = true;
+    
   }
 
   getRandomPattern(){
     if (!this.isBrowser) return;
     this.running = false;
-    this.setRandomPatterns()
+    this.setRandomPatterns();
 
-    this.generation = 0
-    const rand = Math.floor(Math.random() * (3 - 1) + 1)
-    rand == 1 ? this.grid = this.rPentomino : this.grid = this.dieHard;
+    if (!this.running) this.generation = 0
+    const rand = Math.floor(Math.random() * (4 - 1) + 1)
+    if(rand == 1) this.grid = this.rPentomino;
+    else if(rand == 3) this.grid = this.herschel;
+    else if(rand == 2) this.grid = this.dieHard;
+
     this.drawGrid();
   }
 
@@ -202,7 +232,7 @@ export class GameComponent implements AfterViewInit {
 
   resetGrid() {
     if (!this.isBrowser) return;
-    this.cellSize = 20;
+    this.cellSize = 25;
     this.grid = this.createGrid();
     this.drawGrid();
     this.resizeCanvas();
