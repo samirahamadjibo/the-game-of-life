@@ -18,8 +18,7 @@ export class GameComponent implements AfterViewInit {
   @ViewChild('canvasContainer', { static: true }) container!: ElementRef<HTMLDivElement>;
 
   private ctx!: CanvasRenderingContext2D | null;
-  private cellSize = 22;
-  private minCellSize = 8;
+  private cellSize = 12;
   private rows: number;
   private cols: number;
   private grid: Set<string>;
@@ -78,7 +77,7 @@ export class GameComponent implements AfterViewInit {
     this.drawGrid();
     this.generation++;
 
-    const delay = this.cellSize >= 20 ? 90 : this.cellSize >= 12 ? 80 : 70;
+    const delay = this.cellSize >= 20 ? 90 : 80;
     setTimeout(() => this.runGame(), delay);
   }
 
@@ -94,9 +93,9 @@ export class GameComponent implements AfterViewInit {
 
         this.ctx?.beginPath();
         this.ctx?.rect(col * this.cellSize, row * this.cellSize, this.cellSize, this.cellSize);
-        this.ctx!.fillStyle = cellAlive ? 'black' : 'white';
+        this.ctx!.fillStyle = cellAlive ? '#373d20' : 'white';
         this.ctx?.fill();
-        this.ctx!.strokeStyle = this.cellSize >= 20 ? '#D6D5D5' : this.cellSize >= 12 ? '#DEDDDD' : '#EFEFEF';
+        this.ctx!.strokeStyle = this.cellSize >= 20 ? '#EBEBEB' : this.cellSize >= 12 ? '#EBEBEB' : '#EBEBEB';
         this.ctx?.stroke();
       }
     }
@@ -191,6 +190,44 @@ export class GameComponent implements AfterViewInit {
     this.dialog.open(DialogComponent, {
       width: '500px',
     });
+  }
+
+  private centerGrid() {
+    const newRows = Math.floor(this.canvas.nativeElement.height / this.cellSize);
+    const newCols = Math.floor(this.canvas.nativeElement.width / this.cellSize);
+    const newGrid = new Set<string>();
+
+    const rowOffset = Math.floor((newRows - this.rows) / 2);
+    const colOffset = Math.floor((newCols - this.cols) / 2);
+
+    for (const cell of this.grid) {
+      const [row, col] = cell.split(',').map(Number);
+      const newRow = row + rowOffset;
+      const newCol = col + colOffset;
+      if (newRow >= 0 && newRow < newRows && newCol >= 0 && newCol < newCols) {
+        newGrid.add(`${newRow},${newCol}`);
+      }
+    }
+
+    this.rows = newRows;
+    this.cols = newCols;
+    this.grid = newGrid;
+  }
+
+  randomPattern(){
+
+  }
+
+  zoomOut(){
+    this.cellSize = this.cellSize - 2 >= 6 ? this.cellSize -= 2 : this.cellSize;
+    this.centerGrid()
+    this.resizeCanvas();
+  }
+  
+  zoomIn(){
+    this.cellSize = this.cellSize + 2 <= 22 ? this.cellSize += 2 : this.cellSize;
+    this.centerGrid()
+    this.resizeCanvas();
   }
 }
 
