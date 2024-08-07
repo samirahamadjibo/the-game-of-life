@@ -91,9 +91,21 @@ export class GameComponent implements AfterViewInit {
         const cellAlive = this.grid.has(`${row},${col}`);
         if (cellAlive) this.population++;
 
+        const x = col * this.cellSize;
+        const y = row * this.cellSize;
+
         this.ctx?.beginPath();
         this.ctx?.rect(col * this.cellSize, row * this.cellSize, this.cellSize, this.cellSize);
-        this.ctx!.fillStyle = cellAlive ? '#373d20' : 'white';
+        
+        if (cellAlive) {
+          const gradient = this.ctx?.createLinearGradient(x, y, x + this.cellSize, y + this.cellSize);
+          gradient?.addColorStop(0, '#6930c3');
+          gradient?.addColorStop(1, '#72efdd');
+          this.ctx!.fillStyle = gradient!;
+        } else {
+          this.ctx!.fillStyle = 'white';
+        }
+
         this.ctx?.fill();
         this.ctx!.strokeStyle = this.cellSize >= 20 ? '#EBEBEB' : this.cellSize >= 12 ? '#EBEBEB' : '#EBEBEB';
         this.ctx?.stroke();
