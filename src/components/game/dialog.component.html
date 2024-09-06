@@ -1,0 +1,46 @@
+<div class="m-5">
+    <h1 mat-dialog-title class="ff-body mb-5">Informations about Conway's Game of Life</h1>
+
+    <mat-dialog-content class="mb-5 shd-dialog-content">
+      <h3 class="fw-bold">The Game of Life</h3>
+      <p>The Game of Life is a cellular automaton devised by the British mathematician John Horton Conway in 1970. It’s a
+        zero-player game, meaning its evolution is determined by its initial state, requiring no further input.</p>
+      
+      <h3 class="fw-bold mt-5">How It Works</h3>
+      <p>
+        The Game of Life takes place on a grid of square cells. Each cell can be either alive or dead. The state of the grid
+        evolves in steps, known as generations, according to the following rules:
+
+        <div class="mt-5">
+          <ul>
+            Birth: A dead cell with exactly three live neighbors becomes a live cell.
+          </ul>
+          <ul>
+            Survival: A live cell with two or three live neighbors stays alive.
+          </ul>
+          <ul>
+            Death:
+            A live cell with fewer than two live neighbors dies (underpopulation).
+            A live cell with more than three live neighbors dies (overpopulation).
+          </ul>
+        </div>
+
+      <p class="mt-5">
+        The game starts with an initial configuration of live cells. From there, the grid evolves over time, creating complex
+        and often beautiful patterns.
+        Over time, certain patterns may emerge, including stable formations, oscillators, and spaceships.
+      </p>
+
+      <h3 class="fw-bold mt-5">History</h3>
+      <p>
+        John Horton Conway created the Game of Life in 1970 as a simplified model of population dynamics. It became widely
+        popular after being described in Martin Gardner's "Mathematical Games" column in Scientific American. Despite its
+        simplicity, the Game of Life demonstrates how complex patterns can emerge from simple rules. It has inspired research
+        in various fields, including mathematics, computer science, and biology.
+      </p>
+    </mat-dialog-content>
+
+    <mat-dialog-actions>
+      <button class="shd-btn-primary" mat-button (click)="onNoClick()">Done</button>
+    </mat-dialog-actions>
+</div>

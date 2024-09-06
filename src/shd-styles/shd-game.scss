@@ -1,0 +1,80 @@
+canvas {
+    display: block;
+    width: 100%;
+    height: 100%;
+}
+canvas:hover{
+    cursor: pointer
+}
+
+.shd-canvas{
+    height: 100vh;
+    width: 100vw;
+    background-color:#131313;
+}
+
+.shd-canvas-container {
+    width: 100%;
+    height: 100%;
+    position: relative;
+}
+
+.shd-title{
+    position: absolute;
+    top: 20px;
+    left: 20px;
+}
+
+.shd-brand{
+    position: absolute;
+    top: 30px;
+    right: 20px;
+    @media(max-width: map-get($map: $grid-breakpoints, $key: md)){right: 30px};
+}
+
+.logo{
+    @media(max-width: map-get($map: $grid-breakpoints, $key: md)){width: 40px};
+    width: 50px;
+}
+
+.brand-logo{
+    width: 20px;
+    @media(max-width: map-get($map: $grid-breakpoints, $key: md)){width: 26px};
+}
+
+.brand-name:hover{
+    color: shade-color($accent, 20%);
+}
+
+.shd-stats{
+    position: absolute;
+    bottom: 30px;
+    left: 30px;
+    @media(max-width: map-get($map: $grid-breakpoints, $key: sm)){bottom: 100px};
+}
+
+.shd-controls{
+    position: absolute;
+    bottom: 40px;
+    right: 40px;
+}
+
+.shd-dialog-content{
+    color: white;
+}
+
+.mat-mdc-dialog-surface{
+    background-color: $dark-grey !important;
+}
+
+.mat-mdc-dialog-container .mat-mdc-dialog-title{
+    color: $accent !important;
+    font-family: $font-family-sans-serif-body !important;
+}
+
+.mat-mdc-dialog-container .mat-mdc-dialog-content  {
+    color: rgb(210, 210, 210) !important;
+    font-family: $font-family-sans-serif-body !important;
+}
+
+

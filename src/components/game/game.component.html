@@ -1,0 +1,42 @@
+<div #canvasContainer class="px-0 d-flexjustify-content-center align-items-center shd-canvas-container">
+    <canvas #gameCanvas (click)="handleCanvasClick($event);"></canvas>
+</div>
+
+<div>
+    <div class="shd-title d-flex flex-column align-items-center">
+        <img src="the-game-of-life-logo-white.png" alt="logo" class="logo">
+        <h1 class="fs-sm shd-color-accent mt-2">The Game Of Life</h1>
+    </div>
+    <div class="shd-brand d-flex align-items-center">
+        <img src="brand-logo.png" alt="brand" class="brand-logo" href="#">
+        <div class="d-none d-md-inline fs-sm shd-color-accent ms-2"> <span>by </span> <a href="#" class="shd-color-accent link-underline-primary link-offset-2 brand-name">THE GOOD CODE COMPANY</a></div>
+    </div>
+
+    <div class="shd-stats d-flex flex-column fw-light fs-sm">
+        <div>
+            generation: <span class="ms-4">{{generation}}</span>
+        </div>
+        <div>
+            current_population: <span class="ms-4">{{population}}</span>
+        </div>
+        <div>
+            status: <span *ngIf="running" class="ms-4 shd-color-success">on_going</span>
+            <span *ngIf="!running" class="ms-4 shd-color-danger">stopped</span>
+        </div>
+    </div>
+
+    <div class="shd-controls d-flex align-items-center">
+        <div>
+            <button (click)="toggleRunning()" class="shd-btn-primary me-4 fw-bold">{{ running ? 'PAUSE' : 'START'
+                }}</button>
+            <button (click)="resetGrid()" class="shd-btn-secondary fw-bold">RESET</button>
+        </div>
+    
+        <div>
+            <button class="shd-btn-icon-primary fs-lg shd-color-white ps-5" (click)="addRandomShape()"><i
+                    class="bi bi-shuffle"></i></button>
+            <button class="shd-btn-icon-primary fs-lg shd-color-white ps-3" (click)="showInfo()"><i class="bi bi-info-circle"></i></button>
+        </div>
+    </div>
+</div>
+

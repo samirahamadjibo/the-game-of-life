@@ -1,0 +1,169 @@
+.shd-btn {
+    @extend .btn;
+    padding-top: 6px;
+    border-radius: 6px;
+    padding-left: 18px;
+    padding-right: 18px;
+    padding-bottom: 6px;
+    font-size: $font-size-sm;
+}
+
+.shd-btn-primary {
+    @extend .btn-primary;
+    @extend .shd-btn;
+    position: relative;
+    z-index: 1;
+    background: none;
+    border: none;
+    color: $primary;
+
+    &::before {
+        content: "";
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background-color: tint-color($primary, 60%);
+        border-radius: 9px;
+        border: solid black 2px;
+        z-index: -1; /* Behind the text but above ::after */
+    }
+
+    &::after{
+        position: absolute;
+        content: "";
+        width: 72px;
+        left: 8px;
+        top: 5px;
+        height: 32px;
+        border-radius: 9px;
+        background-color: $accent;
+        z-index: -2;
+    }
+}
+
+.shd-btn-secondary {
+    @extend .shd-btn-primary;
+    color: black;
+
+    &::before {
+        background-color: white
+    }
+    &::after {
+        background-color: $medium-grey
+    }
+}
+
+.shd-btn-primary:hover{
+    background: none;
+    color: $primary;
+    &::after{
+        top: 7px;
+        bottom: 3px;
+    }
+}
+
+.shd-btn-primary:first-child:active{
+    background: none;
+    color: $primary;
+}
+:not(.btn-check) + .shd-btn-secondary:active{
+    background: none;
+    color: black;
+}
+
+.shd-btn-secondary:hover{
+    background: none;
+    color: black;
+    &::after{
+        top: 7px;
+        bottom: 3px;
+    }
+}
+
+
+.shd-btn-dark{
+    @extend .btn-dark;
+    @extend .shd-btn;
+}
+.shd-btn-outline {
+    @extend .btn-outline-secondary;
+    @extend .shd-btn;
+    border-color: white;
+    color: white;
+}
+
+.shd-btn-outline-dark{
+    @extend .shd-btn-outline;
+    border-color: black;
+    color: black
+}
+
+.shd-btn-link {
+    @extend .btn-link;
+    color: $dark-grey;
+    text-decoration: none;
+}
+
+.shd-btn-link-nude{
+    @extend .shd-btn-link;
+}
+.shd-btn-link-underline{
+    @extend .shd-btn-link;
+}
+.shd-btn-link-underline:hover{
+    text-decoration: underline;
+
+}
+
+.shd-btn-link-secondary {
+    @extend .shd-btn-link;
+}
+.shd-btn-link:hover{
+    color: $primary;
+    cursor: pointer;
+}
+.shd-btn-link-nude:hover{
+    color: inherit;
+    cursor: pointer;
+}
+.shd-btn-link-secondary:hover{
+    color: $secondary;
+    cursor: pointer;
+}
+
+.shd-btn-link-primary {
+    @extend .shd-btn-link;
+}
+.shd-btn-link-primary:hover{
+    color: $primary;
+    cursor: pointer;
+}
+
+
+.shd-btn-underline {
+    @extend .shd-btn;
+    @extend .shd-btn-link;
+    border-radius: 0px;
+    font-size: $font-size-sm;
+    color: white;
+    text-decoration: none;
+    border-bottom: 1px solid white;
+}
+
+.shd-btn-underline:hover {
+    border-bottom-color: $primary;
+}
+
+.shd-btn-icon-primary{
+    @extend .shd-btn-underline;
+    border: none;
+    color: $secondary;
+    border-bottom: none;
+    padding: 0;
+}
+
+.shd-btn-icon-primary:hover{
+    color: $primary;
+}
