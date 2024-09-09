@@ -107,8 +107,8 @@ export class GameComponent implements AfterViewInit {
     this.canvas.nativeElement.width = containerWidth;
     this.canvas.nativeElement.height = containerHeight;
 
-    this.rows = Math.floor(this.canvas.nativeElement.height / this.cellSize);
-    this.cols = Math.floor(this.canvas.nativeElement.width / this.cellSize);
+    this.rows = Math.ceil(this.canvas.nativeElement.height / this.cellSize);
+    this.cols = Math.ceil(this.canvas.nativeElement.width / this.cellSize);
     this.drawGrid();
   }
 
