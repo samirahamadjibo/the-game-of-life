@@ -84,11 +84,15 @@ export class GameComponent implements AfterViewInit {
     this.populationDied = false;
   }
 
-  ngAfterViewInit() {
+ 
+
+  ngAfterViewInit(): void {
     if (this.isBrowser) {
-      this.ctx = this.canvas.nativeElement.getContext('2d');
-      this.resizeCanvas();
-      this.addRandomShape()
+      setTimeout(() => {
+        this.ctx = this.canvas.nativeElement.getContext('2d');
+        this.resizeCanvas();
+        this.addRandomShape();
+      }, 50);
     }
   }
 

@@ -1,22 +1,33 @@
-canvas {
-    display: block;
-    width: 100%;
-    height: 100%;
-}
-canvas:hover{
-    cursor: pointer
+html, body {
+  height: 100%;
+  margin: 0;
+  padding: 0;
+  overflow: hidden; // optionnel
 }
 
-.shd-canvas{
-    height: 100vh;
-    width: 100vw;
-    background-color:#131313;
+:host {
+  display: block;
+  height: 100vh;
+  width: 100vw;
 }
 
 .shd-canvas-container {
-    width: 100%;
-    height: 100%;
-    position: relative;
+  position: relative;
+  width: 100vw;
+  height: 100vh;
+  background-color: #131313;
+  overflow: hidden;
+}
+
+canvas.shd-canvas {
+  display: block;
+  width: 100%;
+  height: 100%;
+  background-color: #131313;
+}
+
+canvas.shd-canvas:hover {
+  cursor: pointer;
 }
 
 .shd-title{
